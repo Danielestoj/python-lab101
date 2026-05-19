@@ -1,0 +1,11 @@
+{
+    "generado_en": "2026-05-19T15:51:05.952076",
+    "total_ventas": 7,
+    "ingresos_totales": 4519.74,
+    "por_categoria": {
+        "electronica": 3419.86,
+        "muebles": 799.98,
+        "libros": 299.9
+    },
+    "producto_top": "Laptop"
+}
