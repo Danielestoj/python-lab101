@@ -46,20 +46,52 @@ def ventas_en_fecha(ventas, fecha_str):
 
 def main():
     ventas = cargar_ventas("ventas.json")
-    
-    print("Ventas por categoría:")
+
+    total_ventas = len(ventas)
+    ingresos_totales = sum(calcular_total_venta(v) for v in ventas)
+
+    # Totales por categoría
     totales_categoria = ventas_por_categoria(ventas)
-    for categoria, total in totales_categoria.items():
-        print(f"{categoria}: {total:.2f} euros")
-    
+
+    # Producto más rentable
     producto_top = producto_mas_vendido(ventas)
-    print(f"\nProducto más vendido: {producto_top}")
-    
-    fecha_consulta = "18/05/2026"
+    ingreso_top = sum(
+        calcular_total_venta(v) for v in ventas if v["producto"] == producto_top
+    )
+
+    # Ventas en fecha específica
+    fecha_consulta = "2026-01-16"
     ventas_fecha = ventas_en_fecha(ventas, fecha_consulta)
-    print(f"\nVentas en la fecha {fecha_consulta}:")
+
+    # --- IMPRESIÓN DEL INFORME ---
+    print("============================")
+    print("     INFORME DE VENTAS")
+    print("============================\n")
+
+    print(f"Total de ventas: {total_ventas}")
+    print(f"Ingresos totales: {ingresos_totales:,.2f} €\n".replace(",", "X").replace(".", ",").replace("X", "."))
+
+    print("--- Por categoría ---")
+    for categoria, total in totales_categoria.items():
+        print(f"{categoria:<12}: {total:,.2f} €".replace(",", "X").replace(".", ",").replace("X", "."))
+
+    print(f"\nProducto más rentable: {producto_top} ({ingreso_top:,.2f} €)".replace(",", "X").replace(".", ",").replace("X", "."))
+
+    print(f"\n--- Ventas del {fecha_consulta} ---")
     for venta in ventas_fecha:
-        print(venta)
+        total = calcular_total_venta(venta)
+        print(f"- {venta['producto']}: {total:,.2f} €".replace(",", "X").replace(".", ",").replace("X", "."))
+
+    informe = {
+        "generado_en": datetime.now().isoformat(),
+        "total_ventas": total_ventas,
+        "ingresos_totales": round(ingresos_totales, 2),
+        "por_categoria": {k: round(v, 2) for k, v in totales_categoria.items()},
+        "producto_top": producto_top
+    }
+
+    guardar_informe(informe, "informe.json")
+
 
 """ Paso 4: Exportar resultados
 Añade una función guardar_informe(informe, ruta) que guarde el informe en informe.json:"""
